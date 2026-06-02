@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Faturamento Hospitalar - Emissão DPS / NFS-e</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans min-h-screen">
+
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8 border-b pb-4 border-gray-200">
+            <h1 class="text-3xl font-bold text-slate-800">Emissor de Notas Fiscais - Módulo Hospitalar</h1>
+            <p class="text-sm text-slate-500 mt-1">Geração, assinatura e transmissão direta de Declarações de Prestação de Serviço (DPS).</p>
+        </header>
+
+        <form id="formNotaFiscal" class="space-y-6">
+            
+            <!-- SEÇÃO 1: DADOS DA NOTA / FLUXO -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 class="text-lg font-semibold text-slate-700 mb-4 border-b pb-2">1. Identificação da DPS</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Número da DPS</label>
+                        <input type="number" id="numeroDps" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Série</label>
+                        <input type="text" id="serieDps" value="1" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Tipo de Faturamento</label>
+                        <select id="tipoFaturamento" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                            <option value="particular">Particular / Paciente</option>
+                            <option value="convenio">Convênio Médico / Operadora</option>
+                            <option value="institucional">Contrato Institucional / Parceria</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 2: TOMADOR (PACIENTE OU OPERADORA) -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 class="text-lg font-semibold text-slate-700 mb-4 border-b pb-2">2. Dados do Tomador (Cliente/Paciente)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">CPF ou CNPJ</label>
+                        <input type="text" id="tomadorDocumento" placeholder="Apenas números" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Razão Social / Nome Completo</label>
+                        <input type="text" id="tomadorNome" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">Logradouro / Endereço</label>
+                        <input type="text" id="tomadorEndereco" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Cidade (Código IBGE)</label>
+                        <input type="text" id="tomadorMunicipioIbge" placeholder="Ex: 3205200" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">E-mail para Envio</label>
+                        <input type="email" id="tomadorEmail" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 3: DETALHAMENTO DO SERVIÇO HOSPITALAR -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 class="text-lg font-semibold text-slate-700 mb-4 border-b pb-2">3. Discriminação dos Serviços Hospitalares</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Item da LC 116/03</label>
+                        <select id="codigoServico" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                            <option value="04.01">04.01 - Medicina e Biomedicina (Consultas/Tratamentos)</option>
+                            <option value="04.02">04.02 - Análises Clínicas, Patologia, Eletricidade Médica</option>
+                            <option value="04.03">04.03 - Hospitais, Clínicas, Sanatórios, Prontos-Socorros</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Código de Tributação Municipal</label>
+                        <input type="text" id="codigoTribMunicipal" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Valor Total dos Serviços (R$)</label>
+                        <input type="number" step="0.01" id="valorServicos" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Descrição Detalhada (Internações, Prontuários, Insumos inclusos)</label>
+                    <textarea id="discriminacaoServico" rows="4" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" placeholder="Descreva os serviços prestados, ex: Internação em leito de enfermaria do período X ao Y, procedimentos cirúrgicos realizados..."></textarea>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 4: IMPOSTOS E RETENÇÕES NA FONTE -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 class="text-lg font-semibold text-slate-700 mb-4 border-b pb-2">4. Alíquotas e Retenções Tributárias (Hospitais)</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Alíquota ISS (%)</label>
+                        <input type="number" step="0.01" id="aliquotaIss" value="5.00" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Retenção de IR (R$)</label>
+                        <input type="number" step="0.01" id="retencaoIr" value="0.00" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Retenção de PIS (R$)</label>
+                        <input type="number" step="0.01" id="retencaoPis" value="0.00" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Retenção de COFINS (R$)</label>
+                        <input type="number" step="0.01" id="retencaoCofins" value="0.00" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Retenção de CSLL (R$)</label>
+                        <input type="number" step="0.01" id="retencaoCsll" value="0.00" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Retenção de INSS (R$)</label>
+                        <input type="number" step="0.01" id="retencaoInss" value="0.00" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTÃO DE TRANSMISSÃO -->
+            <div class="flex justify-end">
+                <button type="submit" id="btnTransmitir" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition duration-200">
+                    Assinar e Transmitir Nota Fiscal
+                </button>
+            </div>
+        </form>
+
+        <!-- STATUS / RETORNO -->
+        <div id="painelStatus" class="hidden mt-6 p-4 rounded-lg border">
+            <h3 id="tituloStatus" class="font-bold text-lg"></h3>
+            <p id="msgStatus" class="text-sm mt-1"></p>
+            <div id="acoesNota" class="hidden mt-4 space-x-3">
+                <a id="lnkPdf" target="_blank" class="bg-green-600 text-white px-4 py-2 rounded text-sm font-medium shadow hover:bg-green-700">Visualizar DANFSe (PDF)</a>
+                <a id="lnkXml" target="_blank" class="bg-gray-600 text-white px-4 py-2 rounded text-sm font-medium shadow hover:bg-gray-700">Baixar XML Autorizado</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('formNotaFiscal').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('btnTransmitir');
+            const painel = document.getElementById('painelStatus');
+            const titulo = document.getElementById('tituloStatus');
+            const msg = document.getElementById('msgStatus');
+            const acoes = document.getElementById('acoesNota');
+
+            btn.disabled = true;
+            btn.innerText = 'Processando, Assinando e Transmitindo...';
+            painel.className = "mt-6 p-4 rounded-lg border bg-yellow-50 border-yellow-200 text-yellow-800";
+            titulo.innerText = "Conectando ao WebService...";
+            msg.innerText = "Gerando a estrutura XML da DPS e invocando o Certificado A1 corporativo.";
+            painel.classList.remove('hidden');
+            acoes.classList.add('hidden');
+
+            // Captura dinâmica de dados estruturados
+            const payload = {
+                numeroDps: document.getElementById('numeroDps').value,
+                serieDps: document.getElementById('serieDps').value,
+                tipoFaturamento: document.getElementById('tipoFaturamento').value,
+                tomador: {
+                    documento: document.getElementById('tomadorDocumento').value,
+                    nome: document.getElementById('tomadorNome').value,
+                    endereco: document.getElementById('tomadorEndereco').value,
+                    municipioIbge: document.getElementById('tomadorMunicipioIbge').value,
+                    email: document.getElementById('tomadorEmail').value
+                },
+                servico: {
+                    codigo: document.getElementById('codigoServico').value,
+                    tribMunicipal: document.getElementById('codigoTribMunicipal').value,
+                    valorTotal: parseFloat(document.getElementById('valorServicos').value),
+                    discriminacao: document.getElementById('discriminacaoServico').value
+                },
+                impostos: {
+                    aliquotaIss: parseFloat(document.getElementById('aliquotaIss').value),
+                    ir: parseFloat(document.getElementById('retencaoIr').value),
+                    pis: parseFloat(document.getElementById('retencaoPis').value),
+                    cofins: parseFloat(document.getElementById('retencaoCofins').value),
+                    csll: parseFloat(document.getElementById('retencaoCsll').value),
+                    inss: parseFloat(document.getElementById('retencaoInss').value)
+                }
+            };
+
+            try {
+                // Endpoint apontando para a sua Firebase Function configurada
+                const response = await fetch('https://SUA-REGION-SEU-PROJETO.cloudfunctions.net/emitirNotaFiscal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const resultado = await response.json();
+
+                if (response.ok && resultado.success) {
+                    painel.className = "mt-6 p-4 rounded-lg border bg-green-50 border-green-200 text-green-800";
+                    titulo.innerText = `Sucesso! Nota Autorizada (Nº ${resultado.numeroNota})`;
+                    msg.innerText = `Código de Verificação: ${resultado.codigoVerificacao}. A nota foi devidamente transmitida e assinada via mTLS com o WebService governamental.`;
+                    
+                    document.getElementById('lnkPdf').href = resultado.pdfUrl;
+                    document.getElementById('lnkXml').href = resultado.xmlUrl;
+                    acoes.classList.remove('hidden');
+                } else {
+                    throw new Error(resultado.message || 'Rejeição do WebService da Prefeitura.');
+                }
+            } catch (error) {
+                painel.className = "mt-6 p-4 rounded-lg border bg-red-50 border-red-200 text-red-800";
+                titulo.innerText = "Erro na Emissão / Transmissão";
+                msg.innerText = error.message;
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Assinar e Transmitir Nota Fiscal';
+            }
+        });
+    </script>
+</body>
+</html>
